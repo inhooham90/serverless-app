@@ -77,10 +77,10 @@
         "LogGroupName": "/aws/lambda/serverless-app-dev-getUser"
       }
     },
-    "GetUserInfoLogGroup": {
+    "CreateUserLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/serverless-app-dev-getUserInfo"
+        "LogGroupName": "/aws/lambda/serverless-app-dev-createUser"
       }
     },
     "IamRoleLambdaExecution": {
@@ -139,6 +139,13 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/serverless-app-dev*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:*"
+                  ],
+                  "Resource": "*"
                 }
               ]
             }
@@ -167,7 +174,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/serverless-app/dev/1612575089091-2021-02-06T01:31:29.091Z/getUser.zip"
+          "S3Key": "serverless/serverless-app/dev/1612585211686-2021-02-06T04:20:11.686Z/getUser.zip"
         },
         "Handler": "lambdas/endpoints/getUser.handler",
         "Runtime": "nodejs12.x",
@@ -190,18 +197,18 @@
         "GetUserLogGroup"
       ]
     },
-    "GetUserInfoLambdaFunction": {
+    "CreateUserLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/serverless-app/dev/1612575089091-2021-02-06T01:31:29.091Z/getUserInfo.zip"
+          "S3Key": "serverless/serverless-app/dev/1612585211686-2021-02-06T04:20:11.686Z/createUser.zip"
         },
-        "Handler": "lambdas/endpoints/getUser.handler",
+        "Handler": "lambdas/endpoints/createUser.handler",
         "Runtime": "nodejs12.x",
-        "FunctionName": "serverless-app-dev-getUserInfo",
+        "FunctionName": "serverless-app-dev-createUser",
         "MemorySize": 1024,
         "Timeout": 6,
         "Environment": {
@@ -217,27 +224,27 @@
         }
       },
       "DependsOn": [
-        "GetUserInfoLogGroup"
+        "CreateUserLogGroup"
       ]
     },
-    "GetUserInfoLambdaVersionBMLSF8XNI6IPZRVxJNuyPd2fg5dswBpxQGT5J9uXEM": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "FunctionName": {
-          "Ref": "GetUserInfoLambdaFunction"
-        },
-        "CodeSha256": "pWlj5cyoTlQrG2FH/IU0s1jP8Boj4mRT99BxId08xTQ="
-      }
-    },
-    "GetUserLambdaVersionGuUHHZVKjqmaCYUWRukToT5n6wpBWllwag0": {
+    "GetUserLambdaVersionjHmB8DlTnkXfyAOlk4VUqNNSON9I6umWoBxl0QzXtg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetUserLambdaFunction"
         },
-        "CodeSha256": "pWlj5cyoTlQrG2FH/IU0s1jP8Boj4mRT99BxId08xTQ="
+        "CodeSha256": "YXV5zmYaIafRfh1idV/VeC8YvJjTPVpzx4dlzPoT0ek="
+      }
+    },
+    "CreateUserLambdaVersionl0XSfra47Cul4WQzwN42YxFRfeUlmMkcM4XjyEfCQ": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CreateUserLambdaFunction"
+        },
+        "CodeSha256": "/xH/Ozq4B2m3NBUa1Jg9ZHu1Uz83cpfVEviRygCV6Cs="
       }
     },
     "ApiGatewayRestApi": {
@@ -252,7 +259,7 @@
         "Policy": ""
       }
     },
-    "ApiGatewayResourceGetDashuser": {
+    "ApiGatewayResourceUser": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
@@ -261,17 +268,17 @@
             "RootResourceId"
           ]
         },
-        "PathPart": "get-user",
+        "PathPart": "user",
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
       }
     },
-    "ApiGatewayResourceGetDashuserIdVar": {
+    "ApiGatewayResourceUserIdVar": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
-          "Ref": "ApiGatewayResourceGetDashuser"
+          "Ref": "ApiGatewayResourceUser"
         },
         "PathPart": "{ID}",
         "RestApiId": {
@@ -279,34 +286,7 @@
         }
       }
     },
-    "ApiGatewayResourceGetDashuserDashinfo": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "PathPart": "get-user-info",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayResourceGetDashuserDashinfoIdVar": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Ref": "ApiGatewayResourceGetDashuserDashinfo"
-        },
-        "PathPart": "{ID}",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodGetDashuserIdVarOptions": {
+    "ApiGatewayMethodUserIdVarOptions": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "AuthorizationType": "NONE",
@@ -335,7 +315,7 @@
               "ResponseParameters": {
                 "method.response.header.Access-Control-Allow-Origin": "'*'",
                 "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST,GET'"
               },
               "ResponseTemplates": {
                 "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
@@ -344,65 +324,20 @@
           ]
         },
         "ResourceId": {
-          "Ref": "ApiGatewayResourceGetDashuserIdVar"
+          "Ref": "ApiGatewayResourceUserIdVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
       }
     },
-    "ApiGatewayMethodGetDashuserDashinfoIdVarOptions": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "OPTIONS",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true,
-              "method.response.header.Access-Control-Allow-Headers": true,
-              "method.response.header.Access-Control-Allow-Methods": true
-            },
-            "ResponseModels": {}
-          }
-        ],
-        "RequestParameters": {},
-        "Integration": {
-          "Type": "MOCK",
-          "RequestTemplates": {
-            "application/json": "{statusCode:200}"
-          },
-          "ContentHandling": "CONVERT_TO_TEXT",
-          "IntegrationResponses": [
-            {
-              "StatusCode": "200",
-              "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
-              },
-              "ResponseTemplates": {
-                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
-              }
-            }
-          ]
-        },
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceGetDashuserDashinfoIdVar"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodGetDashuserIdVarGet": {
+    "ApiGatewayMethodUserIdVarGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "HttpMethod": "GET",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceGetDashuserIdVar"
+          "Ref": "ApiGatewayResourceUserIdVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -439,13 +374,13 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayMethodGetDashuserDashinfoIdVarGet": {
+    "ApiGatewayMethodUserIdVarPost": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
-        "HttpMethod": "GET",
+        "HttpMethod": "POST",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceGetDashuserDashinfoIdVar"
+          "Ref": "ApiGatewayResourceUserIdVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -470,7 +405,7 @@
                 ":lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
-                    "GetUserInfoLambdaFunction",
+                    "CreateUserLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -482,7 +417,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1612575086761": {
+    "ApiGatewayDeployment1612585195875": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -491,10 +426,9 @@
         "StageName": "dev"
       },
       "DependsOn": [
-        "ApiGatewayMethodGetDashuserIdVarOptions",
-        "ApiGatewayMethodGetDashuserDashinfoIdVarOptions",
-        "ApiGatewayMethodGetDashuserIdVarGet",
-        "ApiGatewayMethodGetDashuserDashinfoIdVarGet"
+        "ApiGatewayMethodUserIdVarOptions",
+        "ApiGatewayMethodUserIdVarGet",
+        "ApiGatewayMethodUserIdVarPost"
       ]
     },
     "GetUserLambdaPermissionApiGateway": {
@@ -534,12 +468,12 @@
         }
       }
     },
-    "GetUserInfoLambdaPermissionApiGateway": {
+    "CreateUserLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
-            "GetUserInfoLambdaFunction",
+            "CreateUserLambdaFunction",
             "Arn"
           ]
         },
@@ -603,16 +537,16 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
-    "GetUserInfoLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "GetUserInfoLambdaVersionBMLSF8XNI6IPZRVxJNuyPd2fg5dswBpxQGT5J9uXEM"
-      }
-    },
     "GetUserLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetUserLambdaVersionGuUHHZVKjqmaCYUWRukToT5n6wpBWllwag0"
+        "Ref": "GetUserLambdaVersionjHmB8DlTnkXfyAOlk4VUqNNSON9I6umWoBxl0QzXtg"
+      }
+    },
+    "CreateUserLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CreateUserLambdaVersionl0XSfra47Cul4WQzwN42YxFRfeUlmMkcM4XjyEfCQ"
       }
     },
     "ServiceEndpoint": {

@@ -28,7 +28,7 @@ provider:
   region: us-east-1
   environment:
     tableName: ${self:custom.tableName}
-  iamRoleStatement:
+  iamRoleStatements:
     - Effect: Allow
       Action: 
         - dynamodb:*
@@ -71,17 +71,25 @@ functions:
     handler: lambdas/endpoints/getUser.handler
     events: 
       - http:
-          path: get-user/{ID}
+          path: user/{ID}
           method: GET
           cors: true
-  
-  getUserInfo:
-    handler: lambdas/endpoints/getUser.handler
+
+  createUser:
+    handler: lambdas/endpoints/createUser.handler
     events: 
       - http:
-          path: get-user-info/{ID}
-          method: GET
+          path: user/{ID}
+          method: POST
           cors: true
+  
+  # getUserInfo:
+  #   handler: lambdas/endpoints/getUser.handler
+  #   events: 
+  #     - http:
+  #         path: get-user-info/{ID}
+  #         method: GET
+  #         cors: true
 
     # you can overwrite defaults here
 #  stage: dev

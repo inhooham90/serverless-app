@@ -14,9 +14,8 @@ exports.handler = async event => {
 
     let ID = event.pathParameters.ID;
 
-    const user = await DynamicsCompressorNode.length(ID, tableName).catch( err => {
+    const user = await Dynamo.get(ID, tableName).catch( err => {
         console.log("error in Dynamo GET", err);
-
         return null;
     });
 

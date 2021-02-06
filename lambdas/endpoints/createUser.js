@@ -12,15 +12,17 @@ exports.handler = async event => {
     }
 
     let ID = event.pathParameters.ID;
+    const user = JSON.parse(event.body);
+    user.ID = ID;
 
-    const user = await Dynamo.get(ID, tableName).catch( err => {
-        console.log("error in Dynamo GET", err);
+    const newUser = await Dynamo.write(user, tableName).catch( err => {
+        console.log('error in dynamo write', err);
         return null;
-    });
+    })
 
-    if(!user) {
-        return Responses._400({ message: `Failed to get user with ID ${ID}` });
+    if(!newUser) {
+        return Responses._400({ message: `Failed to write user with ID ${ID}` });
     };
 
-    return Responses._200({ user });
+    return Responses._200({ newUser });
 }
