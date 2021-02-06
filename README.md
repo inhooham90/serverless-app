@@ -8,5 +8,7 @@ Currently, there exists two lambda functions that works as API endpoints.
 
 1. Creating user - Creates user with email and name
 2. Gets user - Gets user info that's in the database.
+3. Write files to a S3 bucket
+4. Read files from S3 bucket
 
 I'm not too sure what this web app will become.

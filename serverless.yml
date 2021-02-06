@@ -34,7 +34,30 @@ provider:
       Action: 
         - dynamodb:*
         - s3:*
+        - ses:*
       Resource: '*'  
+  apiGateway:
+    apiKeys:
+      - free:
+        - myFreeApiKey
+      - paid:
+        - myPaidApiKey
+        - user2PaidKey
+    usagePlan:
+      - free:
+          quota:
+            limit: 100
+            period: MONTH
+          throttle:
+            rateLimit: 5
+            burstLimit: 20
+      - paid:
+          quota:
+            limit: 1000
+            period: MONTH
+          throttle:
+            rateLimit: 20
+            burstLimit: 100
 
 plugins:
   - serverless-s3-sync
@@ -42,6 +65,8 @@ plugins:
 
 package:
   individually: true
+  exclude:
+    - node_modules/aws-sdk/**
 
 custom:
   tableName: user
@@ -77,6 +102,7 @@ functions:
           path: user/{ID}
           method: GET
           cors: true
+          private: true
 
   createUser:
     handler: lambdas/endpoints/createUser.handler
@@ -85,6 +111,7 @@ functions:
           path: user/{ID}
           method: POST
           cors: true
+          private: true
 
   createFile:
     handler: lambdas/endpoints/createFile.handler
@@ -93,6 +120,38 @@ functions:
           path: file/{fileName}
           method: POST
           cors: true
+          private: true
+  
+  getFile:
+    handler: lambdas/endpoints/getFile.handler
+    events: 
+      - http:
+          path: file/{fileName}
+          method: GET
+          cors: true
+          private: true
+
+  # sendEmail:
+  #   handler: lambdas/endpoints/sendEmail.handler
+  #   events: 
+  #     - http:
+  #         path: send-email
+  #         method: POST
+  #         cors: true
+  #         private: true
+
+  # proxy:
+  #   handler: lambdas/endpoints/proxy.handler
+  #   events:
+  #     - http:
+  #         path: chuck-norris/{proxy+}
+  #         method: ANY
+  #         integration: http-proxy
+  #         request:
+  #           uri: http://api.icndb.com/{proxy}
+  #           parameters:
+  #             paths:
+  #               proxy: true
   
   # getUserInfo:
   #   handler: lambdas/endpoints/getUser.handler
