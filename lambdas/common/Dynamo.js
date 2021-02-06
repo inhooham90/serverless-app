@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const { write } = require('fs');
 
 const documentClient = new AWS.DynamoDB.DocumentClient();
 

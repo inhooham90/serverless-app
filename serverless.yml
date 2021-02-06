@@ -28,10 +28,12 @@ provider:
   region: us-east-1
   environment:
     tableName: ${self:custom.tableName}
+    bucketName: ${self:custom.bucketName}
   iamRoleStatements:
     - Effect: Allow
       Action: 
         - dynamodb:*
+        - s3:*
       Resource: '*'  
 
 plugins:
@@ -43,8 +45,9 @@ package:
 
 custom:
   tableName: user
+  bucketName: inhooham90-serverless-bucket
   s3Sync:
-    - bucketName: inhooham90-serverless-bucket
+    - bucketName: ${self:custom.bucketName}
       localDir: UploadData
 
 resources:
@@ -52,7 +55,7 @@ resources:
     NewResource:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: inhooham90-serverless-bucket
+        BucketName: ${self:custom.bucketName}
     MyDynamoDbTable:
       Type: AWS::DynamoDB::Table
       Properties: 
@@ -80,6 +83,14 @@ functions:
     events: 
       - http:
           path: user/{ID}
+          method: POST
+          cors: true
+
+  createFile:
+    handler: lambdas/endpoints/createFile.handler
+    events: 
+      - http:
+          path: file/{fileName}
           method: POST
           cors: true
   
